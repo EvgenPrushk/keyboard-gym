@@ -726,3 +726,7 @@ body {
 	font-weight: 700;
 }
 /*# sourceMappingURL=main.css.map */
+
+.sel {
+	background-color: #c7d8d4 !important;
+}
