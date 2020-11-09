@@ -72,8 +72,8 @@ function showText(text, printTextLength) {
 
     let string = "";
     for (const word of words) {
-               // составляем строки таким образом, чтобы их длина не привышала 79 символов
-        if ((string + " "  + word).length >= 70) {
+        // составляем строки таким образом, чтобы их длина не привышала 79 символов
+        if ((string + " " + word).length >= 70) {
             strings.push(string)
             string = "";
         }
@@ -82,20 +82,12 @@ function showText(text, printTextLength) {
     if (!string) {
         strings.push(string);
     }
-    for (let i = 0; i < strings.length; i++){
+    for (let i = 0; i < strings.length; i++) {
         // trim() удаляет пробельные символы в начале и в конце строки
         strings[i] = strings[i].trim() + '\n';
     }
+
     
-    const showText = [];
-    for (let i = 0; i < strings.length; i++) {
-       if (printTextLength > 0) {
-           printTextLength -= strings[i].length;
-       }
-       if (printTextLength <= 0) {
-           showText.push(string);
-       }
-        
-    }
+
 }
-1-02-33
+1 - 02 - 33
