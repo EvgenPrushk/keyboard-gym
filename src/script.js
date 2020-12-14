@@ -116,7 +116,7 @@ function showText(text, printTextLength) {
     }
     
 
-       // виртуальный DOM  сразу не вставляет элемент
+       // виртуальный DOM  сразу не вставляет DOM элемент
        const div = document.createElement("div");
 
        for (let i = 0; i < showStrings.length; i++) {
