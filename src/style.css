@@ -730,3 +730,7 @@ body {
 .sel {
 	background-color: #c7d8d4 !important;
 }
+
+.pressed {
+	background-color: #c7d8d4 !important;
+}

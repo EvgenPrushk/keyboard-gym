@@ -1,6 +1,8 @@
-const letters = document.querySelectorAll(".letter");
 const input = document.querySelector("input");
-const textExample = document.querySelector("#textExample");
+// для преобразования node list в массив используем метод Array.from()
+const letters = Array.from(document.querySelectorAll("[data-letters]"));
+
+// const textExample = document.querySelector("#textExample");
 
 const text = ` астрономической точки зрения Солнце – только единица из множества, рядовая звезда среди миллиардов других звёзд. Тысячи из них, возможно, превосходят его блеском, величиной и мощностью. В армии неба Солнце – простой солдат.
 
@@ -23,122 +25,113 @@ const text = ` астрономической точки зрения Солнц
 
 Солнце — самая важная для людей звезда, которая обеспечивает и поддерживает жизнь на планете Земля.`
 
-// массив текста для проверки
-// const text = [
-//     "На переднем плане, прямо перед нами, расположен был дворик, где стоял",
-//     "наполовину вычищенный автомобиль. Шофер Остин был на этот раз",
-//     "уволен окончательно и бесповоротно. Он раскинулся на земле,",
-// ];
 
-// const textDiv = textToDiv(text);
-// // удаление содержимого
-// textExample.innerHTML = "";
-// textExample.append(textDiv);
 
-let printTextLength = 1;
-showText(text, printTextLength);
+// let printTextLength = 1;
+// showText(text, printTextLength);
+init();
 
-document.body.addEventListener("keydown", keydownHandler);
-document.body.addEventListener("keypress", keypressHandler);
-document.body.addEventListener("keyup", keyupHandler);
+function init() {
+    input.addEventListener("keydown", keydownHandler);
 
-// функция будет происходить, когда будет происходить нажатие клавишы
-function keydownHandler(event) {
-
-    for (const letter of letters) {
-        //  проверка, что находиться внутри тега и нажатой клавишы
-        if (letter.textContent === event.key.toUpperCase()) {
-            // при совпадении добавляем класс sel = подсветка
-            letter.classList.add("sel");
-        }
-    }
-};
-
-function keypressHandler(event) {
-    event.preventDefault();
-    input.value += event.key;
+    input.addEventListener("keyup", keyupHandler);
 }
+
+//функция будет происходить, когда будет происходить нажатие клавишы
+function keydownHandler(event) {
+    event.preventDefault();
+    //   В  атрибуте dataset  ищем  подстраку в строке используя метод includes()
+    const letter = letters.find((x) => x.dataset.letters.includes(event.key));
+    
+    if (letter) {
+        letter.classList.add('pressed');
+    }
+}
+
+// function keypressHandler(event) {
+//     event.preventDefault();
+//     input.value += event.key;
+// }
 
 // функция будет происходить, когда будет происходить отжатие клавишы
 function keyupHandler(event) {
-    for (const letter of letters) {
-        //  проверка, что находиться внутри тега и отжатой  клавишы
-        if (letter.textContent === event.key.toUpperCase()) {
-            // при совпадении удаляем класс sel = подсветка
-            letter.classList.remove("sel");
-        }
-    }
-};
-
-function showText(text, printTextLength) {
-    // разбтвка текста по словам
-    const words = text.split(/\s/);
-
-    const strings = [];
-
-    let string = [];
-    for (const word of words) {
-        // составляем строки, чтобы их длина не превышала 70 символов
-        if ((string + word).length >= 70) {
-            strings.push(string);
-            // для начала новой строки
-            string = "";
-        }
-        string += word + " ";
-    }
-
-    if (!string) {
-        strings.push(string);
-    }
-
-    for (let i = 0; i < strings.length; i++) {
-        // trim() удаляет пробельный символ в начале и конце строки
-        strings[i] = strings[i].trim() + "\n";
-    }
-
-    const showStrings = [];   
-    for (let i = 0; i < strings.length; i++) {
-        if (printTextLength > 0) {
-            printTextLength -= strings[i].length;           
-        }
-
-        if (printTextLength <= 0) {
-            if (printTextLength < 0) {
-                printTextLength += strings[i].length;   
-            }
-
-            showStrings.push(strings[i]);
-
-            if (showStrings.length >= 3) {
-                break;
-            }
-        }
-    }
-    
-
-       // виртуальный DOM  сразу не вставляет DOM элемент
-       const div = document.createElement("div");
-
-       for (let i = 0; i < showStrings.length; i++) {
-        const line = document.createElement("div");
-        line.classList.add('line');
-           if (i === 0) {
-               const span = document.createElement("span");
-               span.classList.add("done");
-               span.textContent = showStrings[i].slice(0, printTextLength);
-               line.append(span);
-               line.append(showStrings[i].slice(printTextLength));
-           }
-           else{
-               line.append(showStrings[i]);
-           }
-           div.append(line);
-       }
-       textExample.innerHTML = '';
-       textExample.append(div);
-
-       
-       console.log(div);
-       console.log(strings);
-       console.log(showStrings, printTextLength);
+    // for (const letter of letters) {
+    //     //  проверка, что находиться внутри тега и отжатой  клавишы
+    //     if (letter.textContent === event.key.toUpperCase()) {
+    //         // при совпадении удаляем класс sel = подсветка
+    //         letter.classList.remove("sel");
+    //     }
+    // }
 }
+
+// function showText(text, printTextLength) {
+//     // разбтвка текста по словам
+//     const words = text.split(/\s/);
+
+//     const strings = [];
+
+//     let string = [];
+//     for (const word of words) {
+//         // составляем строки, чтобы их длина не превышала 70 символов
+//         if ((string + word).length >= 70) {
+//             strings.push(string);
+//             // для начала новой строки
+//             string = "";
+//         }
+//         string += word + " ";
+//     }
+
+//     if (!string) {
+//         strings.push(string);
+//     }
+
+//     for (let i = 0; i < strings.length; i++) {
+//         // trim() удаляет пробельный символ в начале и конце строки
+//         strings[i] = strings[i].trim() + "\n";
+//     }
+
+//     const showStrings = [];
+//     for (let i = 0; i < strings.length; i++) {
+//         if (printTextLength > 0) {
+//             printTextLength -= strings[i].length;
+//         }
+
+//         if (printTextLength <= 0) {
+//             if (printTextLength < 0) {
+//                 printTextLength += strings[i].length;
+//             }
+
+//             showStrings.push(strings[i]);
+
+//             if (showStrings.length >= 3) {
+//                 break;
+//             }
+//         }
+//     }
+
+
+//     // виртуальный DOM  сразу не вставляет DOM элемент
+//     const div = document.createElement("div");
+
+//     for (let i = 0; i < showStrings.length; i++) {
+//         const line = document.createElement("div");
+//         line.classList.add('line');
+//         if (i === 0) {
+//             const span = document.createElement("span");
+//             span.classList.add("done");
+//             span.textContent = showStrings[i].slice(0, printTextLength);
+//             line.append(span);
+//             line.append(showStrings[i].slice(printTextLength));
+//         } else {
+//             line.append(showStrings[i]);
+//         }
+//         div.append(line);
+//     }
+//     textExample.innerHTML = '';
+//     textExample.append(div);
+
+
+//     console.log(div);
+//     console.log(strings);
+//     console.log(showStrings, printTextLength);
+// }
