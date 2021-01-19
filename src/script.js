@@ -25,6 +25,8 @@ const text = ` астрономической точки зрения Солнц
 
 Солнце — самая важная для людей звезда, которая обеспечивает и поддерживает жизнь на планете Земля.`
 
+const party = createParty(text);
+
 init();
 
 function init() {
@@ -38,7 +40,7 @@ function keydownHandler(event) {
     event.preventDefault();
     //   В  атрибуте dataset  ищем  подстраку в строке используя метод includes()
     const letter = letters.find((x) => x.dataset.letters.includes(event.key));
-    
+
     if (letter) {
         letter.classList.add('pressed');
         return;
@@ -64,7 +66,7 @@ function keyupHandler(event) {
     event.preventDefault();
 
     const letter = letters.find((x) => x.dataset.letters.includes(event.key));
-    
+
     if (letter) {
         letter.classList.remove('pressed');
         return;
@@ -82,6 +84,22 @@ function keyupHandler(event) {
         ownSpecs.forEach((spec) => spec.classList.remove("pressed"));
         return;
     }
+}
+
+function createParty(text) {
+    const party = {
+        text,
+        strings: [],
+        maxStringLenght: 70,
+        maxShowStrings: 3,
+        currentStringIndex: 0,
+        currentPrintedIndex: 0,
+        errors: [],
+    };
+
+    party.text = party.text.replace(/\n/g, '\n ');
+
+    return party;
 }
 
 function showText(text, printTextLength) {
@@ -130,28 +148,28 @@ function showText(text, printTextLength) {
     }
 
 
-//     // виртуальный DOM  сразу не вставляет DOM элемент
-//     const div = document.createElement("div");
+    //     // виртуальный DOM  сразу не вставляет DOM элемент
+    //     const div = document.createElement("div");
 
-//     for (let i = 0; i < showStrings.length; i++) {
-//         const line = document.createElement("div");
-//         line.classList.add('line');
-//         if (i === 0) {
-//             const span = document.createElement("span");
-//             span.classList.add("done");
-//             span.textContent = showStrings[i].slice(0, printTextLength);
-//             line.append(span);
-//             line.append(showStrings[i].slice(printTextLength));
-//         } else {
-//             line.append(showStrings[i]);
-//         }
-//         div.append(line);
-//     }
-//     textExample.innerHTML = '';
-//     textExample.append(div);
+    //     for (let i = 0; i < showStrings.length; i++) {
+    //         const line = document.createElement("div");
+    //         line.classList.add('line');
+    //         if (i === 0) {
+    //             const span = document.createElement("span");
+    //             span.classList.add("done");
+    //             span.textContent = showStrings[i].slice(0, printTextLength);
+    //             line.append(span);
+    //             line.append(showStrings[i].slice(printTextLength));
+    //         } else {
+    //             line.append(showStrings[i]);
+    //         }
+    //         div.append(line);
+    //     }
+    //     textExample.innerHTML = '';
+    //     textExample.append(div);
 
 
-//     console.log(div);
-//     console.log(strings);
-//     console.log(showStrings, printTextLength);
-// }
+    //     console.log(div);
+    //     console.log(strings);
+    //     console.log(showStrings, printTextLength);
+    // }
