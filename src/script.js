@@ -32,6 +32,13 @@ function keydownHandler(event) {
 
     if (key === " ") {
         key = "space";
+        press(' ');
+    }
+
+   
+
+    if (key === 'enter') {
+        press('\n');
     }
 
     const ownSpecs = specs.filter((x) => x.dataset.spec === key);
@@ -51,6 +58,7 @@ function keyupHandler(event) {
 
     if (letter) {
         letter.classList.remove('pressed');
+        press(event.key);
         return;
     }
 
@@ -75,7 +83,7 @@ function createParty(text) {
         maxStringLenght: 70,
         maxShowStrings: 3,
         currentStringIndex: 0,
-        currentPrintedIndex: 0,
+        currentPressedIndex: 0,
         errors: [],
     };
     // заменим все концы строки на конец строки и пробел
@@ -88,7 +96,7 @@ function createParty(text) {
         // копируем всю строку, которая должна быть сформирована к этому моменту
         // с помощью ... и в конец добавляем word  и объединяем с поощью пробела
         const newStringLenght = [...string, word].join(" ").length + !word.includes("\n");
-        
+
         if (newStringLenght > party.maxStringLenght) {
             party.strings.push(string.join(" ") + " ");
             string = [];
@@ -103,8 +111,18 @@ function createParty(text) {
     }
 
     if (string.length) {
-        party.strings.push(string.join(" "));  
-    } 
+        party.strings.push(string.join(" "));
+    }
 
     return party;
+}
+
+function press(letter) {
+   const string = party.strings[party.currentStringIndex];
+   mustLettetr = party[party.currentPressedIndex];
+
+}
+
+function viewUpdate(text) {
+    
 }
