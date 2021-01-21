@@ -4,6 +4,8 @@ const letters = Array.from(document.querySelectorAll("[data-letters]"));
 
 const specs = Array.from(document.querySelectorAll("[data-spec]"));
 
+const textExample = document.querySelector('#textExample');
+
 const text = 'В начале XIII в. в Центральной Азии возникло новое государство - Монгольская империя. Объединение монгольских племен в немалой степени было вызвано изменением климатических условий местности, где проживали монголы. XI и XII вв. были благоприятными для монголов. Длительный период влажных лет в восточной степи привел к тому, что умножились стада, а, следовательно, одна и та же территория могла прокормить больше людей. Произошло увеличение населения в Монголии. Однако в конце XII в. климат стал постепенно меняться в сторону ухудшения, стал более засушливым. Кочевое скотоводство стало малопродуктивным, в степи стало много избыточного населения. Началась обычная в таких условиях борьба с соседями за пастбища, а также вторжения на земли соседей-земледельцев.'
 
 const party = createParty(text);
@@ -13,8 +15,9 @@ init();
 
 function init() {
     input.addEventListener("keydown", keydownHandler);
-
     input.addEventListener("keyup", keyupHandler);
+
+    viewUpdate();
 }
 
 //функция будет происходить, когда будет происходить нажатие клавишы
@@ -25,6 +28,7 @@ function keydownHandler(event) {
 
     if (letter) {
         letter.classList.add('pressed');
+        press(event.key);
         return;
     }
 
@@ -34,9 +38,7 @@ function keydownHandler(event) {
         key = "space";
         press(' ');
     }
-
-   
-
+    
     if (key === 'enter') {
         press('\n');
     }
@@ -57,8 +59,7 @@ function keyupHandler(event) {
     const letter = letters.find((x) => x.dataset.letters.includes(event.key));
 
     if (letter) {
-        letter.classList.remove('pressed');
-        press(event.key);
+        letter.classList.remove('pressed');        
         return;
     }
 
@@ -118,11 +119,119 @@ function createParty(text) {
 }
 
 function press(letter) {
-   const string = party.strings[party.currentStringIndex];
-   mustLettetr = party[party.currentPressedIndex];
-
-}
-
-function viewUpdate(text) {
+    // в string храниться текущая строчка 
+    const string = party.strings[party.currentStringIndex];
+    // выбираем символ, которые должны напечатать
+    const mustLetter = string[party.currentPressedIndex];
+    console.log(letter, mustLetter);
     
+    if (letter === mustLetter) {
+        party.currentPressedIndex++;
+
+        if (string.length <= party.currentPressedIndex) {
+            party.currentPressedIndex = 0;
+            party.currentStringIndex++;
+        }
+    }  else if (!party.errors.includes(mustLetter)) {
+        party.errors.push(mustLetter);
+    }
+
+    viewUpdate();
 }
+
+
+function viewUpdate() {
+    const string = party.strings[party.currentStringIndex];
+    // делаем копию массива среди всех элементов которые у него есть начиная с
+    // текущей строки заканчивая тем колличеством, которое у нас должно быть в текущей строке
+    const showedStrings = party.strings.slice(
+        party.currentStringIndex,
+        party.currentStringIndex + party.maxShowStrings
+    );
+
+    const div = document.createElement('div');
+
+    const firstLine = document.createElement('div');
+    firstLine.classList.add('line');
+    div.append(firstLine);
+
+    const done = document.createElement('span');
+    done.classList.add('done');
+    done.textContent = string.slice(0, party.currentPressedIndex);
+    // добавдляем done в firstLine добавляем span c классом done
+    // который содержит текст, которые мы успели напечатать
+    // все оставшееся попадет посимвольно после этого
+    firstLine.append(
+        done,
+        ...string
+            .slice(party.currentPressedIndex)
+            .split("")
+            .map((letter) => { 
+                if (letter === " ") {
+                    return ".";
+                } 
+
+                if (letter === "\n") {
+                    return "¶";
+                }
+                
+                if (party.errors.includes(letter)) {
+                    const errorSpan = document.createElement('span');
+                    errorSpan.classList.add('hint');
+                    errorSpan.textContent = letter;
+                    return errorSpan;
+                }
+
+                return letter;
+            })
+    );
+
+    for (let i = 1; i < showedStrings.length; i++) {
+        const line = document.createElement('div');
+        line.classList.add('line');
+        div.append(line);
+
+        line.append(           
+            ...showedStrings[i]                
+                .split("")
+                .map((letter) => {
+                    if (letter === " ") {
+                        return ".";
+                    } 
+    
+                    if (letter === "\n") {
+                        return "¶";
+                    }
+                    
+                    if (party.errors.includes(letter)) {
+                        const errorSpan = document.createElement('span');
+                        errorSpan.classList.add('hint');
+                        errorSpan.textContent = letter;
+                        return errorSpan;
+                    }
+    
+                    return letter;
+                })
+        );
+    }
+
+    textExample.innerHTML = '';
+    textExample.append(div);
+
+    input.value = string.slice(0, party.currentPressedIndex);
+}
+
+
+
+{/* <div>
+				<div class="line">
+					<span class="done"> На переднем плане, прямо перед</span>
+					<span class="hint">н</span>ами, расположен был дворик, где стоял
+				</div>
+				<div class="line">
+					наполовину вычищенный автомобиль. Шофер Остин был на этот раз
+				</div>
+				<div class="line">
+					уволен окончательно и бесповоротно. Он раскинулся на земле,
+				</div>
+			</div>	 */}
