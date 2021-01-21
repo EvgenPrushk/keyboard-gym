@@ -6,6 +6,9 @@ const specs = Array.from(document.querySelectorAll("[data-spec]"));
 
 const textExample = document.querySelector('#textExample');
 
+const symbolsPerMinute = document.querySelector('#symbolsPerMinute');
+const errorPercent = document.querySelector('#errorPercent');
+
 const text = 'В начале XIII в. в Центральной Азии возникло новое государство - Монгольская империя. Объединение монгольских племен в немалой степени было вызвано изменением климатических условий местности, где проживали монголы. XI и XII вв. были благоприятными для монголов. Длительный период влажных лет в восточной степи привел к тому, что умножились стада, а, следовательно, одна и та же территория могла прокормить больше людей. Произошло увеличение населения в Монголии. Однако в конце XII в. климат стал постепенно меняться в сторону ухудшения, стал более засушливым. Кочевое скотоводство стало малопродуктивным, в степи стало много избыточного населения. Началась обычная в таких условиях борьба с соседями за пастбища, а также вторжения на земли соседей-земледельцев.'
 
 const party = createParty(text);
@@ -86,6 +89,13 @@ function createParty(text) {
         currentStringIndex: 0,
         currentPressedIndex: 0,
         errors: [],
+        started: false,
+
+        statisticFlag: false,
+        timerCounter:0,
+        startTimer: 0,        
+        errorCounter: 0,
+        commonCounter: 0,
     };
     // заменим все концы строки на конец строки и пробел
     party.text = party.text.replace(/\n/g, '\n ');
@@ -119,6 +129,13 @@ function createParty(text) {
 }
 
 function press(letter) {
+    party.started = true;
+    if (!party.statisticFlag) {
+        party.statisticFlag = true; 
+
+        party.startTimer = Date.now();
+    }
+
     // в string храниться текущая строчка 
     const string = party.strings[party.currentStringIndex];
     // выбираем символ, которые должны напечатать
@@ -130,10 +147,17 @@ function press(letter) {
         if (string.length <= party.currentPressedIndex) {
             party.currentPressedIndex = 0;
             party.currentStringIndex++;
+            // в конце строки делаем флаг false
+            party.statisticFlag = false;
+            // разница между тещим временем и начальным временем
+            party.timerCounter = Date.now() - party.startTimer;
         }
     }  else if (!party.errors.includes(mustLetter)) {
         party.errors.push(mustLetter);
+        party.errorCounter++;
     }
+
+    party.commonCounter++;
 
     viewUpdate();
 }
@@ -218,6 +242,15 @@ function viewUpdate() {
     textExample.append(div);
 
     input.value = string.slice(0, party.currentPressedIndex);
+
+    if (!party.statisticFlag && party.started) {
+         symbolsPerMinute.textContent = Math.round(
+            (60000 * party.commonCounter) / party.timerCounter
+        );
+        errorPercent.textContent = 
+        Math.floor((10000 * party.errorCounter) / party.commonCounter / 100) + '%';
+        
+     }
 }
 
 
